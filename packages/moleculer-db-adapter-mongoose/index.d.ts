@@ -9,7 +9,7 @@ declare module "moleculer-db-adapter-mongoose" {
 	} from "mongoose";
 	import { Db } from "mongodb";
 
-	type HasModelOrSchema<T extends Document> =
+	type HasModelOrSchema<T extends object> =
 		| {
 				model: Model<T>;
 		  }
@@ -41,12 +41,12 @@ declare module "moleculer-db-adapter-mongoose" {
 		limit?: number;
 	}
 
-	class MongooseDbAdapter<TDocument extends Document> {
+	class MongooseDbAdapter<T extends object> {
 		uri: string;
 		opts?: ConnectOptions;
 		broker: ServiceBroker;
 		service: Service;
-		model: Model<TDocument>;
+		model: Model<T>;
 		schema?: Schema;
 		modelName?: string;
 		db: Db;
@@ -60,7 +60,7 @@ declare module "moleculer-db-adapter-mongoose" {
 		 */
 		init(
 			broker: ServiceBroker,
-			service: Service & HasModelOrSchema<TDocument>
+			service: Service & HasModelOrSchema<T>
 		): void;
 		/**
 		 * Connect to database
@@ -81,19 +81,19 @@ declare module "moleculer-db-adapter-mongoose" {
 		 *  - searchFields
 		 *  - query
 		 */
-		find(filters: FindFilters): Promise<TDocument[]>;
+		find(filters: FindFilters): Promise<T[]>;
 		/**
 		 * Find an entity by query
 		 */
-		findOne(query: any): Promise<TDocument | null>;
+		findOne(query: any): Promise<T>;
 		/**
 		 * Find an entities by ID
 		 */
-		findById(_id: any): Promise<TDocument | null>;
+		findById(_id: any): Promise<T>;
 		/**
 		 * Find any entities by IDs
 		 */
-		findByIds(idList: any[]): Promise<TDocument[]>;
+		findByIds(idList: any[]): Promise<T[]>;
 		/**
 		 * Get count of filtered entites
 		 *
@@ -106,11 +106,11 @@ declare module "moleculer-db-adapter-mongoose" {
 		/**
 		 * Insert an entity
 		 */
-		insert(entity: any): Promise<TDocument>;
+		insert(entity: any): Promise<T>;
 		/**
 		 * Insert many entities
 		 */
-		insertMany(entities: any[]): Promise<TDocument[]>;
+		insertMany(entities: any[]): Promise<T[]>;
 		/**
 		 * Update many entities by `query` and `update`
 		 */
@@ -121,7 +121,7 @@ declare module "moleculer-db-adapter-mongoose" {
 		updateById(
 			_id: any,
 			update: any
-		): DocumentQuery<TDocument | null, TDocument>;
+		): Promise<DocumentQuery<T | null, T>>;
 		/**
 		 * Remove entities which are matched by `query`
 		 */
@@ -129,15 +129,15 @@ declare module "moleculer-db-adapter-mongoose" {
 		/**
 		 * Remove an entity by ID
 		 */
-		removeById(_id: any): DocumentQuery<TDocument | null, TDocument>;
+		removeById(_id: any): Promise<DocumentQuery<T | null, T>>;
 		/**
 		 * Clear all entities from collection
 		 */
-		clear(): Promise<number>;
+		clear(): Promise<void>;
 		/**
 		 * Convert DB entity to JSON object
 		 */
-		entityToObject(entity: any): any;
+		entityToObject(entity: any): object;
 		/**
 		 * Create a filtered query
 		 * Available filters in `params`:
@@ -149,7 +149,7 @@ declare module "moleculer-db-adapter-mongoose" {
 		 */
 		createCursor(
 			params: FindFilters
-		): DocumentQuery<TDocument[], TDocument>;
+		): DocumentQuery<T[], T>;
 
 		/**
 		 * Transforms 'idField' into MongoDB's '_id'

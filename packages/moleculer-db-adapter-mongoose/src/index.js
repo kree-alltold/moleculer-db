@@ -171,7 +171,7 @@ class MongooseDbAdapter {
 	 * @memberof MemoryDbAdapter
 	 */
 	findOne(query) {
-		return this.model.findOne(query).exec();
+		return this.model.findOne(query).exec().then(result => result? result: {});
 	}
 
 	/**
@@ -183,7 +183,7 @@ class MongooseDbAdapter {
 	 * @memberof MongooseDbAdapter
 	 */
 	findById(_id) {
-		return this.model.findById(_id).exec();
+		return this.model.findById(_id).exec().then(result => result? result: {});
 	}
 
 	/**
@@ -268,7 +268,7 @@ class MongooseDbAdapter {
 	 * @memberof MongooseDbAdapter
 	 */
 	updateById(_id, update) {
-		return this.model.findByIdAndUpdate(_id, update, { "new": true });
+		return Promise.resolve(this.model.findByIdAndUpdate(_id, update, { "new": true }));
 	}
 
 	/**
@@ -292,7 +292,7 @@ class MongooseDbAdapter {
 	 * @memberof MongooseDbAdapter
 	 */
 	removeById(_id) {
-		return this.model.findByIdAndRemove(_id);
+		return Promise.resolve(this.model.findByIdAndRemove(_id));
 	}
 
 	/**
@@ -303,7 +303,7 @@ class MongooseDbAdapter {
 	 * @memberof MongooseDbAdapter
 	 */
 	clear() {
-		return this.model.deleteMany({}).then(res => res.n);
+		return this.model.deleteMany({}).then(res => {});
 	}
 
 	/**
@@ -436,7 +436,7 @@ class MongooseDbAdapter {
 	/**
 	* Convert hex string to ObjectID
 	* @param {String} id
-	* @returns ObjectID}
+	* @returns {ObjectID}
 	* @memberof MongooseDbAdapter
 	*/
 	stringToObjectID (id) {
